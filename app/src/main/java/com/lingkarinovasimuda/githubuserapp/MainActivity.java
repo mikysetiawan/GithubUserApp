@@ -1,6 +1,7 @@
 package com.lingkarinovasimuda.githubuserapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingkarinovasimuda.githubuserapp.adapter.GithubUserAdapter;
 import com.lingkarinovasimuda.githubuserapp.model.GithubUser;
+import com.lingkarinovasimuda.githubuserapp.model.ListRepo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.EXTRA_USER;
 
 public class MainActivity extends AppCompatActivity implements GithubUserAdapter.ClickListenerRecycler{
 
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
 
             for (int i = 0; i < arr_list_user.length(); i++) {
                 JSONObject user_obj = arr_list_user.getJSONObject(i);
-                Log.d("testing", "onCreate: "+user_obj);
+//                Log.d("testing", "onCreate: "+user_obj);
                 GithubUser user = new GithubUser();
                 user.setUsername(user_obj.getString("username"));
                 user.setName(user_obj.getString("name"));
@@ -46,6 +49,20 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
                 user.setLocation(user_obj.getString("location"));
                 user.setRepository(user_obj.getString("repository"));
                 user.setFollower(user_obj.getString("follower"));
+                user.setFollowing(user_obj.getString("following"));
+
+                //Get list repo
+                JSONArray arr_list_repo = user_obj.getJSONArray("list_repo");
+                List<ListRepo> list_repo = new ArrayList<>();
+                for (int j = 0; j < arr_list_repo.length(); j++) {
+                    JSONObject repo_obj = arr_list_repo.getJSONObject(j);
+                    Log.d("testing", "list repo : "+repo_obj);
+                    ListRepo list = new ListRepo();
+                    list.setRepo_name(repo_obj.getString("name"));
+                    list.setUrl(repo_obj.getString("url"));
+                    list_repo.add(list);
+                }
+                user.setList_repo(list_repo);
 
                 arr_githubuser.add(user);
             }
@@ -85,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
 
     @Override
     public void onItemClick(GithubUser data) {
-//        Intent intent = new Intent(this, DetailActivity.class);
-//        intent.putExtra("json", gson.toJson(data));
-//        startActivity(intent);
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(EXTRA_USER, data);
+        startActivity(intent);
     }
 }

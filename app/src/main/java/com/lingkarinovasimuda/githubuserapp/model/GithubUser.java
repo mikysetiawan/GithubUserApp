@@ -1,6 +1,11 @@
 package com.lingkarinovasimuda.githubuserapp.model;
 
-public class GithubUser {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.List;
+
+public class GithubUser implements Parcelable {
     private String username;
     private String name;
     private String avatar;
@@ -8,6 +13,54 @@ public class GithubUser {
     private String location;
     private String repository;
     private String follower;
+    private String following;
+    private List<ListRepo> list_repo;
+
+    public GithubUser() {
+
+    }
+
+    protected GithubUser(Parcel in) {
+        username = in.readString();
+        name = in.readString();
+        avatar = in.readString();
+        company = in.readString();
+        location = in.readString();
+        repository = in.readString();
+        follower = in.readString();
+        following = in.readString();
+        list_repo = in.createTypedArrayList(ListRepo.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(username);
+        parcel.writeString(name);
+        parcel.writeString(avatar);
+        parcel.writeString(company);
+        parcel.writeString(location);
+        parcel.writeString(repository);
+        parcel.writeString(follower);
+        parcel.writeString(following);
+        parcel.writeTypedList(list_repo);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<GithubUser> CREATOR = new Creator<GithubUser>() {
+        @Override
+        public GithubUser createFromParcel(Parcel in) {
+            return new GithubUser(in);
+        }
+
+        @Override
+        public GithubUser[] newArray(int size) {
+            return new GithubUser[size];
+        }
+    };
 
     public String getUsername() {
         return username;
@@ -73,5 +126,11 @@ public class GithubUser {
         this.following = following;
     }
 
-    private String following;
+    public List<ListRepo> getList_repo() {
+        return list_repo;
+    }
+
+    public void setList_repo(List<ListRepo> list_repo) {
+        this.list_repo = list_repo;
+    }
 }

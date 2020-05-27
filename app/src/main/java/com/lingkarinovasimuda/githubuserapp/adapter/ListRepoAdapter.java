@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingkarinovasimuda.githubuserapp.R;
-import com.lingkarinovasimuda.githubuserapp.model.GithubUser;
+import com.lingkarinovasimuda.githubuserapp.model.ListRepo;
 
 import java.util.List;
 
@@ -17,15 +17,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.getImageId;
 
-public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.ViewHolder> {
+public class ListRepoAdapter extends RecyclerView.Adapter<ListRepoAdapter.ViewHolder> {
 
-    private List<GithubUser> arr_githubuser;
+    private List<ListRepo> arr_list_repo;
     private ClickListenerRecycler click_listener;
     private Context context;
 
     // data is passed into the constructor
-    public GithubUserAdapter(List<GithubUser> data) {
-        this.arr_githubuser = data;
+    public ListRepoAdapter(List<ListRepo> data) {
+        this.arr_list_repo = data;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.Vi
         View view;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        view = inflater.inflate(R.layout.recycleview_githubuser, parent, false);
+        view = inflater.inflate(R.layout.recycleview_listrepo, parent, false);
         context = parent.getContext();
         return new ViewHolder(view);
     }
@@ -41,46 +41,43 @@ public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.Vi
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        GithubUser user = arr_githubuser.get(position);
+        ListRepo user = arr_list_repo.get(position);
         holder.bind(user);
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return arr_githubuser.size();
+        return arr_list_repo.size();
     }
 
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView tv_username, tv_name;
-        CircleImageView img_ava;
+        TextView tv_repo_name, tv_url;
 
         ViewHolder(View itemView) {
             super(itemView);
-            img_ava = itemView.findViewById(R.id.img_ava);
-            tv_username = itemView.findViewById(R.id.tv_username);
-            tv_name = itemView.findViewById(R.id.tv_name);
+            tv_repo_name = itemView.findViewById(R.id.tv_repo_name);
+            tv_url = itemView.findViewById(R.id.tv_url);
             itemView.setOnClickListener(this);
         }
 
-        public void bind(GithubUser data)
+        public void bind(ListRepo data)
         {
-            img_ava.setImageResource(getImageId(context, data.getAvatar()));
-            tv_username.setText(data.getUsername());
-            tv_name.setText(data.getName());
+            tv_repo_name.setText(data.getRepo_name());
+            tv_url.setText(data.getUrl());
         }
 
         @Override
         public void onClick(View view) {
-            if (click_listener != null) click_listener.onItemClick(arr_githubuser.get(getAdapterPosition()));
+            if (click_listener != null) click_listener.onItemClick(arr_list_repo.get(getAdapterPosition()));
         }
     }
 
     // convenience method for getting data at click position
-    GithubUser getItem(int id) {
-        return arr_githubuser.get(id);
+    ListRepo getItem(int id) {
+        return arr_list_repo.get(id);
     }
 
     // allows clicks events to be caught
@@ -90,7 +87,7 @@ public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.Vi
 
     // parent activity will implement this method to respond to click events
     public interface ClickListenerRecycler {
-        void onItemClick(GithubUser data);
+        void onItemClick(ListRepo data);
     }
 }
 
