@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">GithubUserApp</string>
+    <string name="repository">Repository</string>
+    <string name="_0">0</string>
+    <string name="follower">Pengikut</string>
+    <string name="following">Mengikuti</string>
+    <string name="username">Username</string>
+    <string name="name">Nama</string>
+    <string name="company">Perusahaan</string>
+    <string name="location">Lokasi</string>
+    <string name="repository_list">Daftar Repository</string>
+    <string name="search_username_here">Cari Username Disini…</string>
+    <string name="no_user_found">Pengguna tidak ditemukan</string>
+    <string name="check_connection">Tidak dapat melakukan koneksi ke server, periksa internet anda dan coba kembali</string>
+    <string name="title_activity_followers_following">FollowersFollowingActivity</string>
+    <string name="change_language">Ubah Bahasa</string>
+</resources>

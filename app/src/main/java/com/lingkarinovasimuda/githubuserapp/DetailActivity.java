@@ -1,80 +1,185 @@
 package com.lingkarinovasimuda.githubuserapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lingkarinovasimuda.githubuserapp.adapter.ListRepoAdapter;
-import com.lingkarinovasimuda.githubuserapp.model.GithubUser;
-import com.lingkarinovasimuda.githubuserapp.model.ListRepo;
+import com.lingkarinovasimuda.githubuserapp.model.DetailUser;
+import com.lingkarinovasimuda.githubuserapp.model.UserItem;
+import com.lingkarinovasimuda.githubuserapp.model.UserRepo;
+import com.lingkarinovasimuda.githubuserapp.services.ApiServices;
+import com.lingkarinovasimuda.githubuserapp.services.GetServices;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.EXTRA_USER;
 import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.getImageId;
 
-public class DetailActivity extends AppCompatActivity implements ListRepoAdapter.ClickListenerRecycler{
+public class DetailActivity extends AppCompatActivity implements ListRepoAdapter.ClickListenerRecycler {
 
-    GithubUser github_user;
-    CircleImageView img_ava;
-    TextView tv_repo, tv_follower, tv_following, tv_username, tv_name, tv_company, tv_location;
+    UserItem githubUser;
+    CircleImageView imgAva;
+    TextView tvRepo, tvFollower, tvFollowing, tvUsername, tvName, tvCompany, tvLocation;
     RecyclerView rlv_list_repo;
+    GetServices service;
+    ProgressDialog progressDialog;
+    DetailUser detailUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        github_user = getIntent().getParcelableExtra(EXTRA_USER);
-        img_ava = findViewById(R.id.img_ava);
-        tv_repo = findViewById(R.id.tv_repo);
-        tv_follower = findViewById(R.id.tv_follower);
-        tv_following = findViewById(R.id.tv_following);
-        tv_username = findViewById(R.id.tv_username);
-        tv_name = findViewById(R.id.tv_name);
-        tv_company = findViewById(R.id.tv_company);
-        tv_location = findViewById(R.id.tv_location);
+        githubUser = getIntent().getParcelableExtra(EXTRA_USER);
+        imgAva = findViewById(R.id.img_ava);
+        tvRepo = findViewById(R.id.tv_repo);
+        tvFollower = findViewById(R.id.tv_follower);
+        tvFollowing = findViewById(R.id.tv_following);
+        tvUsername = findViewById(R.id.tv_username);
+        tvName = findViewById(R.id.tv_name);
+        tvCompany = findViewById(R.id.tv_company);
+        tvLocation = findViewById(R.id.tv_location);
 
-        // configure toolbar
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle(github_user.getUsername());
+            getSupportActionBar().setTitle(githubUser.getLogin());
         }
 
-        img_ava.setImageResource(getImageId(this, github_user.getAvatar()));
-        tv_repo.setText(github_user.getRepository());
-        tv_follower.setText(github_user.getFollower());
-        tv_following.setText(github_user.getFollowing());
-        tv_name.setText(github_user.getName());
-        tv_company.setText(github_user.getCompany());
-        tv_location.setText(github_user.getLocation());
+        service = ApiServices.getRetrofitInstance().create(GetServices.class);
 
-        rlv_list_repo = findViewById(R.id.rlv_list_repo);
-        rlv_list_repo.setLayoutManager(new LinearLayoutManager(this));
-        ListRepoAdapter adapter = new ListRepoAdapter(github_user.getList_repo());
-        adapter.setClickListener(this);
-        rlv_list_repo.setAdapter(adapter);
+        progressDialog = new ProgressDialog(DetailActivity.this);
+        progressDialog.setMessage("Loading....");
+        progressDialog.show();
+
+        Call<DetailUser> call = service.getDetailUser(githubUser.getLogin());
+        call.enqueue(new Callback<DetailUser>() {
+            @Override
+            public void onResponse(Call<DetailUser> call, Response<DetailUser> response) {
+                progressDialog.dismiss();
+//                Log.d("RESPONSE GITHUB", "onResponse: ConfigurationListener::"+call.request().url());
+//                Log.d("RESPONSE GITHUB", "onResponse: "+response.body().getPublicRepos());
+                if (response.body() != null) {
+                    detailUser = response.body();
+                    Picasso.Builder builder = new Picasso.Builder(DetailActivity.this);
+                    builder.downloader(new OkHttp3Downloader(DetailActivity.this));
+                    builder.build().load(detailUser.getAvatarUrl())
+                            .placeholder((R.drawable.ic_launcher_background))
+                            .error(R.drawable.ic_launcher_background)
+                            .into(imgAva);
+
+                    tvRepo.setText(detailUser.getPublicRepos().toString());
+                    tvFollower.setText(detailUser.getFollowers().toString());
+                    tvFollowing.setText(detailUser.getFollowing().toString());
+                    tvName.setText(detailUser.getName());
+
+                    if (detailUser.getCompany() == null) {
+                        tvCompany.setVisibility(View.GONE);
+                    } else {
+                        tvCompany.setVisibility(View.VISIBLE);
+                        tvCompany.setText(detailUser.getCompany());
+                    }
+
+                    if (detailUser.getLocation() == null) {
+                        tvLocation.setVisibility(View.GONE);
+                    } else {
+                        tvLocation.setVisibility(View.VISIBLE);
+                        tvLocation.setText(detailUser.getLocation());
+                    }
+
+                    tvFollower.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(DetailActivity.this, FollowersFollowingActivity.class);
+                            intent.putExtra("tabOpen", 1);
+                            intent.putExtra(EXTRA_USER, detailUser);
+                            startActivity(intent);
+                        }
+                    });
+
+                    tvFollowing.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(DetailActivity.this, FollowersFollowingActivity.class);
+                            intent.putExtra("tabOpen", 2);
+                            intent.putExtra(EXTRA_USER, detailUser);
+                            startActivity(intent);
+                        }
+                    });
+
+                    generateRepoList(githubUser.getLogin());
+                } else {
+                    Log.e("RESPONSE GITHUB", "Response null: " + response.body());
+                    Toast.makeText(DetailActivity.this, "No User Found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DetailUser> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.e("RESPONSE GITHUB", "onFailure: ", t);
+                Toast.makeText(DetailActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    private void generateRepoList(String username) {
+        progressDialog = new ProgressDialog(DetailActivity.this);
+        progressDialog.setMessage("Loading....");
+        progressDialog.show();
+
+        Call<List<UserRepo>> call = service.getUserRepo(username);
+        call.enqueue(new Callback<List<UserRepo>>() {
+            @Override
+            public void onResponse(Call<List<UserRepo>> call, Response<List<UserRepo>> response) {
+                progressDialog.dismiss();
+//                Log.d("RESPONSE GITHUB", "onResponse: ConfigurationListener::"+call.request().url());
+//                Log.d("RESPONSE GITHUB", "onResponse: "+response.body());
+                if (response.body() != null && response.body().size() > 0) {
+                    // set up the RecyclerView
+                    rlv_list_repo = findViewById(R.id.rlv_list_repo);
+                    rlv_list_repo.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
+                    ListRepoAdapter adapter = new ListRepoAdapter(response.body());
+                    adapter.setClickListener(DetailActivity.this);
+                    rlv_list_repo.setAdapter(adapter);
+                } else {
+                    Log.e("RESPONSE GITHUB", "Response null: " + response.body());
+                    Toast.makeText(DetailActivity.this, "No Repo Found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserRepo>> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.e("RESPONSE GITHUB", "onFailure: ", t);
+                Toast.makeText(DetailActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
-    public void onItemClick(ListRepo data) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data.getUrl()));
+    public void onItemClick(UserRepo data) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data.getHtmlUrl()));
         startActivity(browserIntent);
     }
 

@@ -9,23 +9,23 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingkarinovasimuda.githubuserapp.R;
-import com.lingkarinovasimuda.githubuserapp.model.GithubUser;
+import com.lingkarinovasimuda.githubuserapp.model.UserItem;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.getImageId;
-
 public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.ViewHolder> {
 
-    private List<GithubUser> arr_githubuser;
-    private ClickListenerRecycler click_listener;
+    private List<UserItem> arrGithubUser;
+    private ClickListenerRecycler clickListener;
     private Context context;
 
     // data is passed into the constructor
-    public GithubUserAdapter(List<GithubUser> data) {
-        this.arr_githubuser = data;
+    public GithubUserAdapter(List<UserItem> data) {
+        this.arrGithubUser = data;
     }
 
     @Override
@@ -41,56 +41,60 @@ public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.Vi
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        GithubUser user = arr_githubuser.get(position);
+        UserItem user = arrGithubUser.get(position);
         holder.bind(user);
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return arr_githubuser.size();
+        return arrGithubUser.size();
     }
 
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView tv_username, tv_name;
+        TextView tv_username;
         CircleImageView img_ava;
 
         ViewHolder(View itemView) {
             super(itemView);
             img_ava = itemView.findViewById(R.id.img_ava);
             tv_username = itemView.findViewById(R.id.tv_username);
-            tv_name = itemView.findViewById(R.id.tv_name);
             itemView.setOnClickListener(this);
         }
 
-        public void bind(GithubUser data)
-        {
-            img_ava.setImageResource(getImageId(context, data.getAvatar()));
-            tv_username.setText(data.getUsername());
-            tv_name.setText(data.getName());
+        public void bind(UserItem data) {
+            Picasso.Builder builder = new Picasso.Builder(context);
+            builder.downloader(new OkHttp3Downloader(context));
+            builder.build().load(data.getAvatarUrl())
+                    .placeholder((R.drawable.ic_launcher_background))
+                    .error(R.drawable.ic_launcher_background)
+                    .into(img_ava);
+
+            tv_username.setText(data.getLogin());
         }
 
         @Override
         public void onClick(View view) {
-            if (click_listener != null) click_listener.onItemClick(arr_githubuser.get(getAdapterPosition()));
+            if (clickListener != null)
+                clickListener.onItemClick(arrGithubUser.get(getAdapterPosition()));
         }
     }
 
     // convenience method for getting data at click position
-    GithubUser getItem(int id) {
-        return arr_githubuser.get(id);
+    UserItem getItem(int id) {
+        return arrGithubUser.get(id);
     }
 
     // allows clicks events to be caught
-    public void setClickListener(ClickListenerRecycler item_click_listener) {
-        this.click_listener = item_click_listener;
+    public void setClickListener(ClickListenerRecycler item_clickListener) {
+        this.clickListener = item_clickListener;
     }
 
     // parent activity will implement this method to respond to click events
     public interface ClickListenerRecycler {
-        void onItemClick(GithubUser data);
+        void onItemClick(UserItem data);
     }
 }
 

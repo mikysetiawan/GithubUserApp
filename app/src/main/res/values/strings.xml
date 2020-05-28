@@ -9,4 +9,9 @@
     <string name="company">Company</string>
     <string name="location">Location</string>
     <string name="repository_list">Repository List</string>
+    <string name="search_username_here">Search Username Here…</string>
+    <string name="no_user_found">No User Found</string>
+    <string name="check_connection">Can\'t connect to server, please check your internet connection and try again</string>
+    <string name="title_activity_followers_following">FollowersFollowingActivity</string>
+    <string name="change_language">Change Language</string>
 </resources>
