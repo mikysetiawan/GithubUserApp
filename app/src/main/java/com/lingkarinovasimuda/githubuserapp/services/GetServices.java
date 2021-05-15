@@ -2,6 +2,7 @@ package com.lingkarinovasimuda.githubuserapp.services;
 
 import com.lingkarinovasimuda.githubuserapp.model.DetailUser;
 import com.lingkarinovasimuda.githubuserapp.model.ResponseGithubSearchUser;
+import com.lingkarinovasimuda.githubuserapp.model.ResponseUserList;
 import com.lingkarinovasimuda.githubuserapp.model.UserItem;
 import com.lingkarinovasimuda.githubuserapp.model.UserRepo;
 

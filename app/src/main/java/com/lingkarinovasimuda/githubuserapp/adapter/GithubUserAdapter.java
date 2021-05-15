@@ -19,7 +19,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GithubUserAdapter extends RecyclerView.Adapter<GithubUserAdapter.ViewHolder> {
 
-    private List<UserItem> arrGithubUser;
+    private final List<UserItem> arrGithubUser;
     private ClickListenerRecycler clickListener;
     private Context context;
 

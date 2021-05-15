@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_favorite"
+        android:title="@string/my_favorite"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_change_settings"
-        android:title="@string/change_language"
+        android:title="@string/setting"
         app:showAsAction="never"/>
 </menu>

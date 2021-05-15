@@ -14,4 +14,14 @@
     <string name="check_connection">Can\'t connect to server, please check your internet connection and try again</string>
     <string name="title_activity_followers_following">FollowersFollowingActivity</string>
     <string name="change_language">Change Language</string>
+    <string name="add_favorite">ADD TO FAVORITE</string>
+    <string name="remove_favorite">REMOVE FROM FAVORITE</string>
+    <string name="failed_remove_fav">Failed to remove from favorite</string>
+    <string name="failed_save_favorite">Failed saving to favorite</string>
+    <string name="my_favorite">My Favorite</string>
+    <string name="my_favorite_user">My Favorite User</string>
+    <string name="language_setting">Language Setting</string>
+    <string name="language">Language</string>
+    <string name="reminder">reminder</string>
+    <string name="setting">Setting</string>
 </resources>

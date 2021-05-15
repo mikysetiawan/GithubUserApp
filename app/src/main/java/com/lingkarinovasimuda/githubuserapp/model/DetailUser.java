@@ -100,6 +100,21 @@ public class DetailUser implements Parcelable {
 	@SerializedName("node_id")
 	private String nodeId;
 
+	public DetailUser(){
+
+	}
+
+	public DetailUser(int id, String login, String name, String avatarUrl, int publicRepos, int publicGists, int following, int followers){
+		this.id = id;
+		this.login = login;
+		this.name = name;
+		this.avatarUrl = avatarUrl;
+		this.publicRepos = publicRepos;
+		this.publicGists = publicGists;
+		this.followers = followers;
+		this.following = following;
+	}
+
 	protected DetailUser(Parcel in) {
 		gistsUrl = in.readString();
 		reposUrl = in.readString();

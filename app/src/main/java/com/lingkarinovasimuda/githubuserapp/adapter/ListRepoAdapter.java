@@ -9,14 +9,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingkarinovasimuda.githubuserapp.R;
-import com.lingkarinovasimuda.githubuserapp.model.UserItem;
 import com.lingkarinovasimuda.githubuserapp.model.UserRepo;
 
 import java.util.List;
 
 public class ListRepoAdapter extends RecyclerView.Adapter<ListRepoAdapter.ViewHolder> {
 
-    private List<UserRepo> arrListRepo;
+    private final List<UserRepo> arrListRepo;
     private ClickListenerRecycler clickListener;
     private Context context;
 

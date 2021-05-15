@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ConsumerApp</string>
+    <string name="no_user_found">No User Found</string>
+    <string name="username">Username</string>
+</resources>

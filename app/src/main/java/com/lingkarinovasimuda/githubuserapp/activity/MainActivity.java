@@ -1,4 +1,4 @@
-package com.lingkarinovasimuda.githubuserapp;
+package com.lingkarinovasimuda.githubuserapp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -8,16 +8,16 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lingkarinovasimuda.githubuserapp.R;
 import com.lingkarinovasimuda.githubuserapp.adapter.GithubUserAdapter;
 import com.lingkarinovasimuda.githubuserapp.model.UserItem;
 import com.lingkarinovasimuda.githubuserapp.model.ResponseGithubSearchUser;
@@ -34,12 +34,13 @@ import static com.lingkarinovasimuda.githubuserapp.utils.Helpers.EXTRA_USER;
 
 public class MainActivity extends AppCompatActivity implements GithubUserAdapter.ClickListenerRecycler {
 
-    GithubUserAdapter adapter;
-    ProgressDialog progressDialog;
-    EditText edtSearchUsername;
-    TextView tvErrorList;
-    RecyclerView rlvListUser;
-    GetServices service;
+    private GithubUserAdapter adapter;
+    private ProgressDialog progressDialog;
+    private SearchView edtSearchUsername;
+    private TextView tvErrorList;
+    private RecyclerView rlvListUser;
+    private GetServices service;
+    private List<UserItem> listUser;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
                     tvErrorList.setVisibility(View.GONE);
                     rlvListUser.setVisibility(View.VISIBLE);
 
-                    generateDataList(response.body());
+                    listUser = response.body();
+                    generateDataList(listUser);
                 } else {
                     tvErrorList.setText(R.string.no_user_found);
                     tvErrorList.setVisibility(View.VISIBLE);
@@ -80,27 +82,36 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
             public void onFailure(Call<List<UserItem>> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.e("RESPONSE GITHUB", "onFailure: ", t);
+                tvErrorList.setVisibility(View.VISIBLE);
                 tvErrorList.setText(R.string.check_connection);
                 Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        edtSearchUsername.setOnTouchListener(new View.OnTouchListener() {
+        edtSearchUsername.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
-                final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
+            public void onClick(View view) {
+                edtSearchUsername.setIconified(false);
+            }
+        });
 
-                //Get event when user click the search icon
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    if (motionEvent.getRawX() >= (edtSearchUsername.getRight() - edtSearchUsername.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        // your action here
-                        searchUserGithub(edtSearchUsername.getText().toString());
-                        return true;
-                    }
-                }
+        edtSearchUsername.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchUserGithub(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        edtSearchUsername.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                generateDataList(listUser);
                 return false;
             }
         });
@@ -122,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
                     rlvListUser.setVisibility(View.VISIBLE);
 
                     List<UserItem> user = response.body().getItems();
-                    Log.d("RESPONSE GITHUB", "onResponse: " + response.body());
+//                    Log.d("RESPONSE GITHUB", "onResponse: " + response.body());
                     generateDataList(user);
                 } else {
                     tvErrorList.setText(R.string.no_user_found);
@@ -135,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
             public void onFailure(Call<ResponseGithubSearchUser> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.e("RESPONSE GITHUB", "onFailure: ", t);
+                tvErrorList.setVisibility(View.VISIBLE);
                 tvErrorList.setText(R.string.check_connection);
                 Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
             }
@@ -165,8 +177,11 @@ public class MainActivity extends AppCompatActivity implements GithubUserAdapter
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_change_settings) {
-            Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-            startActivity(mIntent);
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivity(intent);
+        }else if (item.getItemId() == R.id.action_favorite) {
+            Intent intent = new Intent(this, FavoriteActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

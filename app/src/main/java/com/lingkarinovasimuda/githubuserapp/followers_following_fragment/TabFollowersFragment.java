@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lingkarinovasimuda.githubuserapp.DetailActivity;
+import com.lingkarinovasimuda.githubuserapp.activity.DetailActivity;
 import com.lingkarinovasimuda.githubuserapp.R;
 import com.lingkarinovasimuda.githubuserapp.adapter.GithubUserAdapter;
 import com.lingkarinovasimuda.githubuserapp.model.DetailUser;

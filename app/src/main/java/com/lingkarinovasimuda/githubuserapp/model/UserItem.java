@@ -64,7 +64,13 @@ public class UserItem implements Parcelable {
 	@SerializedName("organizations_url")
 	private String organizationsUrl;
 
-	protected UserItem(Parcel in) {
+	public UserItem(int id, String login, String avatarUrl){
+		this.id = id;
+		this.login = login;
+		this.avatarUrl = avatarUrl;
+	}
+
+	public UserItem(Parcel in) {
 		gistsUrl = in.readString();
 		reposUrl = in.readString();
 		followingUrl = in.readString();

@@ -14,4 +14,13 @@
     <string name="check_connection">Tidak dapat melakukan koneksi ke server, periksa internet anda dan coba kembali</string>
     <string name="title_activity_followers_following">FollowersFollowingActivity</string>
     <string name="change_language">Ubah Bahasa</string>
+    <string name="add_favorite">TAMBAHKAN KE FAVORIT</string>
+    <string name="remove_favorite">HAPUS DARI FAVORIT</string>
+    <string name="failed_remove_fav">Gagal saat menghapus dari favorit</string>
+    <string name="failed_save_favorite">Gagal saat menyimpan ke favorit</string>
+    <string name="my_favorite">Favorit Saya</string>
+    <string name="my_favorite_user">Pengguna Favorit Saya</string>
+    <string name="language_setting">Language Setting</string>
+    <string name="language">Language</string>
+    <string name="setting">Setting</string>
 </resources>
